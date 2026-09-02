@@ -480,8 +480,10 @@ def main():
             rrhf_loss = 0
             sft_loss = 0
             entropy_loss = 0
+            # scores/logprobs/reward_scores are flat over all candidates of all samples;
+            # slice them per sample using the running offset (same as the logging block above)
+            start = 0
             for idx in range(batch_size):
-                start = 0
                 rrhf_loss += 0.5*rrhf_loss_func(scores[start:start+batch_counts[idx]], reward_scores[start:start+batch_counts[idx]])
                 sft_loss += 0.5*sft_loss_func(logprobs[start:start+batch_counts[idx]], reward_scores[start:start+batch_counts[idx]])
                 entropy_loss += 0.1*entropy_loss_func(logprobs[start:start+batch_counts[idx]], reward_scores[start:start+batch_counts[idx]])
