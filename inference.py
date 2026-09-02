@@ -27,8 +27,10 @@ def build_model(args=None,
         from_checkpoint = args.from_checkpoint
     
     if model_architecture=="llava":
+        # half precision, same as demo_gradio.py (fp32 needs ~32GB for the 8B model)
         model = LlavaForConditionalGeneration.from_pretrained(
-                from_checkpoint, 
+                from_checkpoint,
+                torch_dtype=torch.float16,
                 low_cpu_mem_usage=True)
         processor = AutoProcessor.from_pretrained(from_checkpoint)
 
@@ -129,7 +131,9 @@ prompts_query2 = [
 
 
 for step, image_name in tqdm.tqdm(enumerate(os.listdir(args.image_folder))):
-    image_path = os.path.join(args.image_folder, image_name)
+    # RewardEngine resolves relative image paths against its root (save_folder here),
+    # so pass an absolute path; otherwise it looks for save_folder/image_folder/image_name
+    image_path = os.path.abspath(os.path.join(args.image_folder, image_name))
     instruction = prompts_query2[random.randint(0, len(prompts_query2)-1)]
     prompt = (f"<|start_header_id|>user<|end_header_id|>\n\n<image>\n{instruction}<|eot_id|>"
             "<|start_header_id|>assistant<|end_header_id|>\n\n")
@@ -143,7 +147,7 @@ for step, image_name in tqdm.tqdm(enumerate(os.listdir(args.image_folder))):
     image = Image.open(image_path).convert("RGB")
     image_outputs = image_processor(image)
 
-    res_all = model.generate(pixel_values=torch.tensor(image_outputs['pixel_values'][0]).unsqueeze(0).to(device), input_ids=torch.LongTensor(res['input_ids']).unsqueeze(0).to(device), \
+    res_all = model.generate(pixel_values=torch.tensor(image_outputs['pixel_values'][0]).unsqueeze(0).to(device, model.dtype), input_ids=torch.LongTensor(res['input_ids']).unsqueeze(0).to(device), \
                                     attention_mask=torch.LongTensor(res["attention_mask"]).unsqueeze(0).to(device), \
                                     max_new_tokens=args.max_generation_length_of_sampling, **generation_kwargs,\
                                     pad_token_id=tokenizer.eos_token_id) # eos_token_id: 128001

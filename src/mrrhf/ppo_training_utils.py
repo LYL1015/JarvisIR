@@ -1,7 +1,7 @@
 import torch
 import torch.nn.functional as F
 from transformers import GenerationConfig
-from .utils.data import DST
+from utils.data import DST
 import re
 import copy
 

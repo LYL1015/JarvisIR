@@ -23,8 +23,8 @@ from torch.utils.tensorboard import SummaryWriter
 from datetime import datetime
 sys.path.append(
     os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
-from .utils.data import build_dataset, DataCollatorPadToMaxLenForPPOTraining, split_dataset, shuffle_dataset
-from .utils.utils import print_rank_0, to_device, save_hf_format, set_random_seed, get_all_reduce_mean
+from utils.data import build_dataset, DataCollatorPadToMaxLenForPPOTraining, split_dataset, shuffle_dataset
+from utils.utils import print_rank_0, to_device, save_hf_format, set_random_seed, get_all_reduce_mean
 
 
 def parse_args():
