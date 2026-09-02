@@ -7,8 +7,9 @@ from PIL import Image
 from transformers import AutoModelForCausalLM
 import math
 
-# XXX: Set cache directory for transformers
-os.environ['TRANSFORMERS_CACHE'] = 'xxx' #   
+# Environment variable pointing to the local Q-Align (q-future/one-align) weights.
+# The transformers cache location is left to the user's environment (HF_HOME / TRANSFORMERS_CACHE).
+QALIGN_PATH_ENV = 'QALIGN_PATH'
 
 class IQAScore:
     """
@@ -18,21 +19,28 @@ class IQAScore:
     IQA models like QAlign, MANIQA, MUSIQ, CLIPIQA, and NIQE.
     """
     
-    def __init__(self, device='cuda', score_weight=None):
+    def __init__(self, device='cuda', score_weight=None, qalign_path=None):
         """
         Initialize the IQA Score calculator.
-        
+
         Args:
             device (str): Computing device ('cuda' or 'cpu').
             score_weight (list, optional): Weight for each metric [qalign, maniqa, musiq, clipiqa, niqe].
                                           Defaults to [1,1,1,1,1].
+            qalign_path (str, optional): Local directory of the Q-Align weights. Falls back to the
+                                         QALIGN_PATH environment variable.
         """
         self.device = device
         self.score_weight = score_weight if score_weight is not None else [1, 1, 1, 1, 1]
-        
+
         # Path to the QAlign model
-        qalign_path = None
-        
+        qalign_path = qalign_path or os.environ.get(QALIGN_PATH_ENV)
+        if not qalign_path:
+            raise ValueError(
+                f"Q-Align weights path is not set. Pass qalign_path=... or set the {QALIGN_PATH_ENV} "
+                "environment variable to the local directory of the q-future/one-align weights "
+                "(with the config files from dependences/qalign applied, see docs/mrrhf_training.md).")
+
         # Initialize metrics based on weights
         print("Loading IQA metrics...")
         

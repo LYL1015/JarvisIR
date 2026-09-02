@@ -10,7 +10,7 @@ from .Retinexformer.inference import load_retinexformer_model, retinexformer_pre
 from .img2img_turbo.inference import load_turbo_model, turbo_predict
 from .ESRGAN.inference import load_esrgan_model, esrgan_predict
 from .IDT.inference import load_idt_model, idt_predict
-from .iqa_reward import IQAReward
+from .iqa_reward import IQAScore
 # Configure environment variables
 os.environ["BASICSR_JIT"] = "True"
 os.environ["CUDA_VISIBLE_DEVICES"] = "7"
@@ -20,7 +20,7 @@ app = Flask(__name__)
 
 # Global variables
 models = {}
-iqa = IQAReward()
+iqa = IQAScore()
 
 class ModelTester:
     """
@@ -38,7 +38,7 @@ class ModelTester:
         """
         self.output_base_dir = output_base_dir
         self.models = {}
-        self.iqa = IQAReward()
+        self.iqa = IQAScore()
         self.model_loaders = {
             'scunet': (load_scu_model, scu_predict),
             'retinexformer_lolv2': (lambda: load_retinexformer_model('LOLV2'), retinexformer_predict),
