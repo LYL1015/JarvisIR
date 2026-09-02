@@ -23,7 +23,10 @@ cd q_align
 hf download q-future/one-align --local-dir ./
 ```
 3. Replace [path = None](../dependences/qalign/modeling_mplug_owl2.py) with the absolute path of ```q_align```. 
-4. Replace [qalign_path = None](../package/agent_tools/iqa_reward.py) with the absolute path of ```q_align```.
+4. Point `IQAScore` at the ```q_align``` weights, either by passing `IQAScore(qalign_path=...)` or by exporting the environment variable before running:
+   ```bash
+   export QALIGN_PATH=/absolute/path/to/q_align
+   ```
 5. Replace ```checkpoints/q_align/modeling_llama2.py``` and ```checkpoints/q_align/modeling_mplug_owl2.py``` with ```dependences/qalign/modeling_llama2.py``` and ```dependences/qalign/modeling_mplug_owl2.py```.
 
 ## Usage
