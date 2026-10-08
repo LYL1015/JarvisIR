@@ -4,8 +4,8 @@ from torch.utils.data.sampler import RandomSampler
 import sys
 from utils.model import build_model 
 
-from .utils.utils import to_device
-from .utils.data import build_dataset, DataCollatorPadToMaxLenForPPOTraining, split_dataset, shuffle_dataset
+from utils.utils import to_device
+from utils.data import build_dataset, DataCollatorPadToMaxLenForPPOTraining, split_dataset, shuffle_dataset
 from tqdm import tqdm
 import torch
 import logging

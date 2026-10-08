@@ -1,7 +1,7 @@
 import torch
 import torch.nn.functional as F
 from transformers import GenerationConfig
-from .utils.data import DST
+from utils.data import DST
 import re
 import copy
 
@@ -246,9 +246,14 @@ def sampling_llava_bs(actor_model,
             img_score_to_normalize = img_score[mask]
             diff = img_score_to_normalize - identity_score
             # weights for maniqa, musiq, qinstruct
+            weights = None
             for name_weight, weight_list in score_weight_map.items():
                 if name_weight in image_paths[index]:
                     weights = torch.tensor(weight_list, device=device)
+            if weights is None:
+                raise ValueError(
+                    f"cannot infer degradation type from path {image_paths[index]}; "
+                    f"expected the path to contain one of {list(score_weight_map)}")
             weighted_diff = diff * weights
             final_scores = (weighted_diff/identity_score).sum(dim=1)
             img_score_new[mask] = final_scores.float() 

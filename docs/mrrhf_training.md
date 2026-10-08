@@ -18,7 +18,11 @@ This guide provides step-by-step instructions for performing mrrhf training.
     python src/mrrhf/generate_offline_data.py --save_path Offline_data.json --data_path rrhf_train.json
     ```
 4. **File Replacement**  
-    Use the file in 'dependences/qalign' to replace the qalign configuration file downloaded from huggingface to solve the library version compatibility issue
+    Use the file in 'dependences/qalign' to replace the qalign configuration file downloaded from huggingface to solve the library version compatibility issue.
+    Then point the reward model to that local directory (used by `package/agent_tools/iqa_reward.py`, also needed by `inference.py` and `demo_gradio.py`):
+    ```bash
+    export QALIGN_PATH=/path/to/one-align
+    ```
 
     
 ## MRRHF Training
